@@ -6,6 +6,8 @@ import LoadingSpinner from '../components/ui/LoadingSpinner';
 import MainLayout from '../layout/MainLayout';
 
 
+
+const Register = lazy(() => import('../pages/auth/Register'))
 const Login = lazy(() => import('../pages/auth/Login'))
 const Dashboard = lazy(() => import('../pages/dashboard/Dashboard'))
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'))
@@ -16,6 +18,8 @@ function AppRoutes() {
     <Suspense fallback={<LoadingSpinner />}>
       <Routes>
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        {/* <Route path="/register/:token" element={<PublicRoute><Register /></PublicRoute>} /> */}
+        <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
         
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -23,7 +27,8 @@ function AppRoutes() {
           {/*  d'autres routes protégées ici */}
         </Route>
 
-        <Route path="*" element={<Navigate to="/NotFoundPage" />} />
+        {/* <Route path="*" element={<Navigate to="/NotFoundPage" />} /> */}
+        <Route path="*" element={<NotFoundPage/>} />
       </Routes>
     </Suspense>
   )

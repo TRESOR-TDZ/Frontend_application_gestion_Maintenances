@@ -51,23 +51,62 @@ const UsersPage = () => {
     fetchUsers();
   }, []); // [] pour n'exécuter qu'une fois au montage
 
-  const handleInvite = async (email, role) => {
-    try {
-      await inviteUser(email, role);
-      // Recharger les utilisateurs après invitation
-      const response = await api.get('/users');
-      // --- ET ICI AUSSI ---
-      const usersData = response.data.data; // <--- Accède à la propriété 'data'
+  // const sendInvite = async (email, role) => {
+  //   try {
+  //     const response = await api.post('/api/invitations', { email, role })
+  //     return response.data
+  //   } catch (error) {
+  //     // Gérer les erreurs Laravel ici (422, 500, etc.)
+  //     if (error.response && error.response.data && error.response.data.message) {
+  //       throw new Error(error.response.data.message)
+  //     } else {
+  //       throw new Error('Une erreur est survenue.')
+  //     }
+  //   }
+  // };
 
-      if (Array.isArray(usersData)) {
-        setUsers(usersData);
-      } else {
-        setUsers([]); // En cas de problème
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Erreur lors de l\'invitation.');
+  // const handleInvite = async (email, role) => {
+  //   try {
+  //     await inviteUser(email, role);
+  //     // Recharger les utilisateurs après invitation
+  //     const response = await api.get('/users');
+  //     // --- ET ICI AUSSI ---
+  //     const usersData = response.data.data; // <--- Accède à la propriété 'data'
+
+  //     if (Array.isArray(usersData)) {
+  //       setUsers(usersData);
+  //     } else {
+  //       setUsers([]); // En cas de problème
+  //     }
+  //   } catch (err) {
+  //     setError(err.response?.data?.message || 'Erreur lors de l\'invitation.');
+  //   }
+  // };
+const handleInvite = async (email, role) => {
+  try {
+    // 1. Envoyer l'invitation
+    const response = await api.post('/', { email, role });
+
+    // 2. Recharger les utilisateurs après succès
+    const usersResponse = await api.get('/users');
+    const usersData = usersResponse.data.data;
+
+    if (Array.isArray(usersData)) {
+      setUsers(usersData);
+    } else {
+      setUsers([]);
+      console.warn("Format inattendu dans response.data.data :", usersResponse.data);
     }
-  };
+
+    return response.data; // Si besoin de récupérer la réponse initiale
+  } catch (error) {
+    const message = error.response?.data?.message || 'Une erreur est survenue.';
+    setError(message);
+    throw new Error(message);
+  }
+};
+
+  
 
   const handleDelete = async (userId) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {

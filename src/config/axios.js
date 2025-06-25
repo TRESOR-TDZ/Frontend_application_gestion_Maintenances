@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const navigate = useNavigate
+
 const api = axios.create({
   baseURL: 'http://localhost:8000/api',
   withCredentials: true, // Pour les cookies Laravel Sanctum

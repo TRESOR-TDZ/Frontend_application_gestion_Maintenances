@@ -47,9 +47,7 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
               Email
             </label>
             <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
-              </div>
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">   <Mail className="h-5 w-5 text-gray-400" /> </div>
               <input type="email" id="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                 placeholder="email@exemple.com"
@@ -58,9 +56,7 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
           </div>
 
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-              Rôle
-            </label>
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700">  Rôle</label>
             <select id="role" value={role} onChange={(e) => setRole(e.target.value)}
               className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
             >
@@ -72,12 +68,8 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
         </div>
 
         <div className="mt-6 flex justify-end space-x-3">
-          <Button type="button" variant="secondary" onClick={onClose}>
-            Annuler
-          </Button>
-          <Button type="submit" isLoading={isLoading}>
-            Envoyer l'invitation
-          </Button>
+          <Button type="button" variant="secondary" onClick={onClose}>  Annuler</Button>
+          <Button type="submit" isLoading={isLoading}>  Envoyer l'invitation</Button>
         </div>
       </form>
     </Modal>
