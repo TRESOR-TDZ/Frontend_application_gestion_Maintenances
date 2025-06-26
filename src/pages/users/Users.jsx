@@ -85,7 +85,7 @@ const UsersPage = () => {
 const handleInvite = async (email, role) => {
   try {
     // 1. Envoyer l'invitation
-    const response = await api.post('/', { email, role });
+    const response = await api.post('/invite', { email, role });
 
     // 2. Recharger les utilisateurs après succès
     const usersResponse = await api.get('/users');
@@ -106,6 +106,7 @@ const handleInvite = async (email, role) => {
   }
 };
 
+console.log('User data:', users[0]); // pour voir la structure d'un utilisateur
   
 
   const handleDelete = async (userId) => {

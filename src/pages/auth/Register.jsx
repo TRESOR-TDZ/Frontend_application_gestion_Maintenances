@@ -23,7 +23,7 @@ function Register() {
 
   const CheckInvitation = async () => {
     try {
-      const response = await api.get(`/users/invitation/${token}`);
+      const response = await api.get(`/accept-invitation/${token}`);
       setInvitationData(response.data);
       setFormData(prev => ({
         ...prev,
@@ -50,7 +50,7 @@ function Register() {
     setErrors({})
 
     try {
-      const { data } = await api.post('/register', formData)
+      const { data } = await api.post('/auth/register', formData)
       navigate('/login', { state: { successMessage: data.message } })
     } catch (err) {
       setErrors(err.response?.data?.errors || { general: err.response?.data?.message || 'Erreur lors de l\'inscription' })
@@ -119,7 +119,7 @@ function Register() {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-gray-400" />
                   </div>  
-                  <input type="role" id="role" name="role" required value={formData.role} onChange={handleChange} disabled={emailDisabled} placeholder='role'
+                  <input type="text" id="role" name="role" required value={formData.role} onChange={handleChange} disabled={emailDisabled} placeholder='role'
                     className={`block w-full pl-10 pr-3 py-2.5 border ${errors.email ? 'border-accent' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent`}
                   />  
                 </div>
