@@ -106,7 +106,7 @@ const handleInvite = async (email, role) => {
   }
 };
 
-console.log('User data:', users[0]); // pour voir la structure d'un utilisateur
+// console.log('User data:', users[0]); // pour voir la structure d'un utilisateur
   
 
   const handleDelete = async (userId) => {

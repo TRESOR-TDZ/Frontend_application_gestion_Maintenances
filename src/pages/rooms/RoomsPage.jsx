@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../config/axios'
-import { Plus, Search, Filter, Home, Edit, Trash2 } from 'lucide-react'
+import { Plus, Search, Filter, Home, Edit, Trash2, User } from 'lucide-react'
 import Table from '../../components/ui/Table'
 import Button from '../../components/ui/Button'
 import RoomFormModal from '../../components/rooms/RoomFormModal'
@@ -9,6 +9,8 @@ import StatusBadge from '../../components/ui/StatusBadge'
 import EmptyState from '../../components/ui/EmptyState'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import Pagination from '../../components/ui/Pagination'
+import AssignLocationsModal from '../../components/rooms/AssignLocationsModal'
+import AssignedUsers from '../../components/rooms/AssignedUsers'
 
 const RoomsPage = () => {
   const { user } = useAuth()
@@ -20,6 +22,8 @@ const RoomsPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const roomsPerPage = 10
+  const [selectedRoomForAssignment, setSelectedRoomForAssignment] = useState(null);
+  const [showAssignModal, setShowAssignModal] = useState(false);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -81,10 +85,19 @@ const RoomsPage = () => {
     setRooms(roomsData)
     
     setIsModalOpen(false)
-  } catch (err) {
-    setError(err.response?.data?.message || 'Erreur lors de la sauvegarde')
+      } catch (err) {
+        setError(err.response?.data?.message || 'Erreur lors de la sauvegarde')
+      }
   }
-}
+
+  const handleRemoveUser = async (roomId, userId) => {
+    try {
+      await api.delete(`/locations/${roomId}/assign/${userId}`);
+      await fetchRooms();
+    } catch (error) {
+      console.error('Error removing user:', error);
+    }
+  };
 
   const columns = [
     { header: 'Nom', accessor: 'name' },
@@ -103,6 +116,27 @@ const RoomsPage = () => {
       header: 'Capacité', 
       accessor: 'capacity',
       render: (row) => row.capacity ? `${row.capacity} pers.` : '-'
+    },
+        {
+      header: 'Assignation',
+      accessor: 'assignment',
+      render: (row) => (
+        <div className="flex space-x-2">
+          <button
+            onClick={() => {
+              setSelectedRoomForAssignment(row);
+              setShowAssignModal(true);
+            }}
+            className="text-primary hover:text-secondary"
+          >
+            <User className="h-5 w-5" />
+          </button>
+          <AssignedUsers
+            users={row.users || []}
+            onRemove={(userId) => handleRemoveUser(row.id, userId)}
+          />
+        </div>
+      ),
     },
     {
       header: 'Actions',
@@ -191,7 +225,14 @@ const RoomsPage = () => {
         />
       )}
 
-      <RoomFormModal room={selectedRoom} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSubmit}
+      <RoomFormModal room={selectedRoom} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSubmit}/>
+      <AssignLocationsModal
+        isOpen={showAssignModal}
+        onClose={() => {
+          setShowAssignModal(false);
+          setSelectedRoomForAssignment(null);
+        }}
+        roomId={selectedRoomForAssignment?.id}
       />
     </div>
   )
@@ -200,10 +241,7 @@ const RoomsPage = () => {
 export default RoomsPage;
 
 
-// je dois verifier pourquoi la capacite ne s/'affiche pas dans la table des locaux et continuer avec les autres fonctionnationalités propose par deepseek 
-// L'assignation d'équipements aux locaux
-// L'export des données 
-// possibilite de voir plus sur un local
+
 
 // fonctionnalitee future:
 // La visualisation sur une carte

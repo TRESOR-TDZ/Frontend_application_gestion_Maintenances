@@ -13,6 +13,7 @@ const Dashboard = lazy(() => import('../pages/dashboard/Dashboard'))
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'))
 const Users = lazy(() => import('../pages/users/Users'))
 const Rooms = lazy(() => import('../pages/rooms/RoomsPage'))
+const Equipments = lazy(() => import('../pages/equipments/Equipments'))
 
 function AppRoutes() {
   return (
@@ -26,6 +27,7 @@ function AppRoutes() {
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/users" element={ <ProtectedRoute allowedRoles={['super_admin', 'admin']}> <Users /> </ProtectedRoute> }/>
           <Route path="/rooms" element={ <ProtectedRoute allowedRoles={['super_admin', 'admin']}> <Rooms /> </ProtectedRoute>} />
+          <Route path="/equipments" element={ <ProtectedRoute allowedRoles={['super_admin', 'admin']}> <Equipments /> </ProtectedRoute>} />
           {/*  d'autres routes protégées ici */}
         </Route>
 

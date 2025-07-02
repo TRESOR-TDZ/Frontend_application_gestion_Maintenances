@@ -1,5 +1,5 @@
 const StatusBadge = ({ status }) => {
-  console.log('StatusBadge received status:', status);
+  // console.log('StatusBadge received status:', status);
   
   // Convertir en minuscules pour une meilleure compatibilité
   const normalizedStatus = status?.toLowerCase();
@@ -7,7 +7,14 @@ const StatusBadge = ({ status }) => {
   const statusClasses = {
     active: 'bg-green-100 text-green-800',
     inactive: 'bg-red-100 text-red-800',
-    // pending: 'bg-yellow-100 text-yellow-800'
+    in_use: 'bg-blue-100 text-blue-800',
+    pending: 'bg-yellow-100 text-yellow-800',
+    maintenance: 'bg-purple-100 text-purple-800',
+    available: 'bg-green-100 text-green-800',
+    reserved: 'bg-orange-100 text-orange-800',
+    broken: 'bg-red-100 text-red-800',
+    decommissioned: 'bg-gray-100 text-gray-800',
+    unknown: 'bg-gray-100 text-gray-800'
   }
 
   // Afficher un message dans la console si le statut n'est pas reconnu
