@@ -1,9 +1,12 @@
-import { Pencil, Trash2, ChevronDown, User as UserIcon } from 'lucide-react';
+import { Pencil, Trash2, ChevronDown, User as UserIcon, Eye } from 'lucide-react';
 import { useState } from 'react';
 import StatusBadge from '../ui/StatusBadge';
+import UserDetailsModal from './UserDetailsModal';
 
 const UserTable = ({ users, onEdit, onDelete, currentUserId }) => {
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' })
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const sortedUsers = [...users].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -44,7 +47,8 @@ const UserTable = ({ users, onEdit, onDelete, currentUserId }) => {
                   </div>
                   <div className="ml-4">
                     <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                    <div className="text-sm text-gray-500">{user.department || '-'}</div>
+                    {/* <div className="text-sm text-gray-500">{user.department || '-'}</div> */}
+                     {/* a ajouter car ce n'est pas encore effectif cote backend  le departement */}
                   </div>
                 </div>
               </td>
@@ -53,6 +57,11 @@ const UserTable = ({ users, onEdit, onDelete, currentUserId }) => {
               <td className="px-6 py-4 whitespace-nowrap"> <StatusBadge status={user.status} /> </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div className="flex space-x-2">
+                  <button  onClick={() => {   setSelectedUser(user);   setIsDetailsOpen(true); }}
+                    className="text-gray-600 hover:text-gray-900"
+                  >
+                    <Eye className="h-5 w-5 text-secondary" />
+                  </button>
                   <button onClick={() => onEdit(user)} className="text-primary hover:text-primary-600">
                     <Pencil className="h-5 w-5" />
                   </button>
@@ -67,6 +76,12 @@ const UserTable = ({ users, onEdit, onDelete, currentUserId }) => {
           ))}
         </tbody>
       </table>
+
+      <UserDetailsModal 
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        user={selectedUser}
+      />
     </div>
   )
 };

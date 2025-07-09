@@ -11,6 +11,8 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import Pagination from '../../components/ui/Pagination'
 import AssignLocationsModal from '../../components/rooms/AssignLocationsModal'
 import AssignedUsers from '../../components/rooms/AssignedUsers'
+import RoomStats from '../../components/rooms/RoomStats'
+import RoomExportControls from '../../components/rooms/RoomExportControls'
 
 const RoomsPage = () => {
   const { user } = useAuth()
@@ -25,10 +27,23 @@ const RoomsPage = () => {
   const [selectedRoomForAssignment, setSelectedRoomForAssignment] = useState(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
 
+  const fetchRooms = async () => {
+    try {
+      const response = await api.get('/locations?include=users')
+      setRooms(response.data.data)
+    } catch (err) {
+      setError(err.response?.data?.message || 'Erreur de chargement')
+    }
+  }
+
+  useEffect(() => {
+    fetchRooms()
+  }, [])
+  
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await api.get('/locations')
+        const response = await api.get('/locations?include=users')
         const roomsData = Array.isArray(response.data) 
         ? response.data 
         : response.data?.rooms || response.data?.data || [];
@@ -168,6 +183,8 @@ const RoomsPage = () => {
   if (loading) return <div className="flex justify-center py-12"><LoadingSpinner /></div>
   if (error) return <div className="text-center text-accent py-12">{error}</div>
 
+  
+
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
       <div className="sm:flex sm:items-center mb-6">
@@ -185,6 +202,8 @@ const RoomsPage = () => {
           </Button>
         </div>
       </div>
+
+      <RoomStats rooms={rooms} />
 
       <div className="mb-6 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -225,6 +244,11 @@ const RoomsPage = () => {
         />
       )}
 
+      {/* Section d'exportation */}
+      <div className="w-fit mx-auto m-6">
+       <RoomExportControls rooms={rooms} />  
+      </div>
+
       <RoomFormModal room={selectedRoom} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSubmit}/>
       <AssignLocationsModal
         isOpen={showAssignModal}
@@ -233,6 +257,7 @@ const RoomsPage = () => {
           setSelectedRoomForAssignment(null);
         }}
         roomId={selectedRoomForAssignment?.id}
+        onSuccess={fetchRooms}
       />
     </div>
   )

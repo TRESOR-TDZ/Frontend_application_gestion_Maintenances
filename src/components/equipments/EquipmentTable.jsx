@@ -9,7 +9,7 @@ const statusClasses = {
   out_of_service: 'bg-red-100 text-red-800'
 }
 
-const EquipmentTable = ({ equipments, onViewDetails, currentUser }) => {
+const EquipmentTable = ({ equipments, onViewDetails, onEdit, onDelete, currentUser }) => {
 
 
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' })
@@ -98,12 +98,12 @@ const EquipmentTable = ({ equipments, onViewDetails, currentUser }) => {
                   <button  onClick={() => onViewDetails(equipment)}  className="text-primary hover:text-primary-600"  title="Voir détails">
                     <Eye className="h-5 w-5" />
                   </button>
-                  <button  className="text-gray-600 hover:text-gray-900"  title="Modifier">
+                  <button   onClick={() => onEdit(equipment)} className="text-gray-600 hover:text-gray-900"  title="Modifier">
                     <Edit className="h-5 w-5" />
                   </button>
                   {(currentUser.role === 'admin' || currentUser.role === 'super_admin') && (
                     <button
-                      // onClick={() => onDelete(equipment.id)}
+                      onClick={() => onDelete(equipment.id)}
                       className="text-red-600 hover:text-red-900"
                       title="Supprimer"
                     >

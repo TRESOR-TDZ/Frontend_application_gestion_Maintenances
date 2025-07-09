@@ -1,6 +1,6 @@
 // utils/exportUtils.js
 import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
+import { autoTable } from 'jspdf-autotable';
 import * as XLSX from 'xlsx'
 
 export const exportToPDF = async ({ data, columns, fileName }) => {
@@ -16,7 +16,7 @@ export const exportToPDF = async ({ data, columns, fileName }) => {
     })
   )
 
-  doc.autoTable({
+  autoTable(doc,{
     head: [columns.map(col => col.header)],
     body: pdfData,
     styles: { fontSize: 8 },

@@ -1,5 +1,3 @@
-// 
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../config/axios';
@@ -9,6 +7,9 @@ import InviteUserModal from '../../components/users/InviteUserModal';
 import UserFormModal from '../../components/users/UserForm';
 import Button from '../../components/ui/Button';
 import Pagination from '../../components/ui/Pagination';
+import UserStats from '../../components/users/UserStats';
+import UserExportControls from '../../components/users/UserExportControls';
+import UserDetailsModal from '../../components/users/UserDetailsModal';
 
 const UsersPage = () => {
   const { user: currentUser, inviteUser } = useAuth();
@@ -21,21 +22,19 @@ const UsersPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
       const response = await api.get('/users');
-      // --- C'est ici que tu dois changer ---
-      const usersData = response.data.data; // <--- Accède à la propriété 'data' DE LA RÉPONSE API
-                                           // response.data est l'objet {data: [...]}
-                                           // response.data.data est le tableau [...]
-
+      //  console.log('Données utilisateurs:', response.data);
+      const usersData = response.data.data;
       if (Array.isArray(usersData)) {
-        setUsers(usersData); // Utilise maintenant usersData
+        setUsers(usersData);
+        setStats(calculateStats(usersData));
       } else {
-        // Cela devrait gérer les cas où response.data.data n'est pas un tableau
-        // (par ex., si l'API renvoie { data: null } ou { data: "erreur" })
+
         setUsers([]); 
         console.warn("API returned unexpected data format within 'data' property:", response.data);
       }
@@ -49,40 +48,23 @@ const UsersPage = () => {
   };
 
     fetchUsers();
-  }, []); // [] pour n'exécuter qu'une fois au montage
-
-  // const sendInvite = async (email, role) => {
-  //   try {
-  //     const response = await api.post('/api/invitations', { email, role })
-  //     return response.data
-  //   } catch (error) {
-  //     // Gérer les erreurs Laravel ici (422, 500, etc.)
-  //     if (error.response && error.response.data && error.response.data.message) {
-  //       throw new Error(error.response.data.message)
-  //     } else {
-  //       throw new Error('Une erreur est survenue.')
-  //     }
-  //   }
-  // };
-
-  // const handleInvite = async (email, role) => {
-  //   try {
-  //     await inviteUser(email, role);
-  //     // Recharger les utilisateurs après invitation
-  //     const response = await api.get('/users');
-  //     // --- ET ICI AUSSI ---
-  //     const usersData = response.data.data; // <--- Accède à la propriété 'data'
-
-  //     if (Array.isArray(usersData)) {
-  //       setUsers(usersData);
-  //     } else {
-  //       setUsers([]); // En cas de problème
-  //     }
-  //   } catch (err) {
-  //     setError(err.response?.data?.message || 'Erreur lors de l\'invitation.');
-  //   }
-  // };
-const handleInvite = async (email, role) => {
+  }, []); 
+  
+  const calculateStats = (users) => {
+  const totalUsers = users.length;
+  const activeUsers = users.filter(u => u.status === 'active').length;
+  const admins = users.filter(u => u.role === 'admin').length;
+  const lastWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const newUsers = users.filter(u => new Date(u.created_at) > lastWeek).length;
+  
+  return {
+    total: totalUsers,
+    active: activeUsers,
+    admins: admins,
+    new: newUsers
+  };
+};
+  const handleInvite = async (email, role) => {
   try {
     // 1. Envoyer l'invitation
     const response = await api.post('/invite', { email, role });
@@ -154,7 +136,12 @@ const handleInvite = async (email, role) => {
         </div>
       </div>
 
-      <div className="mb-6">
+    {/* Statistiques */}
+  {stats && (
+    <UserStats stats={stats} />
+  )}
+
+      <div className="flex justify-between mb-6">
         <div className="relative max-w-xs">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search className="h-5 w-5 text-gray-400" />
@@ -163,6 +150,8 @@ const handleInvite = async (email, role) => {
             className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
           />
         </div>
+        {/* Section d'exportation */}
+        <UserExportControls users={users} />
       </div>
 
       <div className="bg-white shadow rounded-lg overflow-hidden">
@@ -198,3 +187,5 @@ const handleInvite = async (email, role) => {
 };
 
 export default UsersPage;
+
+// il y;a encore le champs departement a ajouter pour pour les utilisateurs

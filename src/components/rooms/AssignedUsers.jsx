@@ -15,12 +15,9 @@ function AssignedUsers({ users, onRemove }) {
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
               </div>
-              <button
-                onClick={() => onRemove(user.id)}
-                className="text-accent hover:text-red-700"
-              >
+              {/* <button  onClick={() => onRemove(user.id)}  className="text-accent hover:text-red-700">
                 <Trash2 className="h-4 w-4" />
-              </button>
+              </button> */}
             </div>
           ))}
         </div>
@@ -32,3 +29,5 @@ function AssignedUsers({ users, onRemove }) {
 }
 
 export default AssignedUsers;
+
+// la fonctionnalité de suppression des assignations est commentee, parceque elle doit encore etre mise sur peid cote backend 

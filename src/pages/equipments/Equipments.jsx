@@ -34,7 +34,7 @@ function EquipmentsPage() {
 const handleDelete = async (id) => {
   if (window.confirm('Confirmer la suppression de cet équipement ?')) {
     try {
-      await api.delete(`/equipments/${id}`)
+      await api.delete(`/equipment/${id}`)
       setEquipments(prev => prev.filter(e => e.id !== id))
     } catch (err) {
       setError(err.response?.data?.message || 'Erreur de suppression')
